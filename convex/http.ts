@@ -2,20 +2,18 @@ import { httpRouter } from "convex/server";
 import {httpAction} from "./_generated/server"
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { Webhook } from "svix";
+import {api} from "./_generated/api"
 
 const http = httpRouter()
 
 http.route({
-  path: "/clerk-webbhook",
+  path: "/clerk-webhook",
   method: "POST",
-
   handler: httpAction(async (ctx, request) => {
     const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
-
     if (!webhookSecret) {
       throw new Error("Missing CLERK_WEBHOOK_SECRET environment variable");
     }
-
 
     const svix_id = request.headers.get("svix-id");
     const svix_signature = request.headers.get("svix-signature");
@@ -45,8 +43,10 @@ http.route({
     }
 
     const eventType = evt.type;
-    if(eventType === "user.created") {
+    if (eventType === "user.created") {
+      // save the user to convex db
       const { id, email_addresses, first_name, last_name } = evt.data;
+
       const email = email_addresses[0].email_address;
       const name = `${first_name || ""} ${last_name || ""}`.trim();
 
@@ -63,7 +63,7 @@ http.route({
     }
 
     return new Response("Webhook processed successfully", { status: 200 });
-  })
-})
+  }),
+});
 
 export default http;
