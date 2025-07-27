@@ -1,11 +1,12 @@
 "use client";
 
-import { SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import LoginButton from "@/components/LoginButton";
+import { SignedOut, UserButton } from "@clerk/nextjs";
 import { User } from "lucide-react";
 
 function HeaderProfileBtn() {
   return (
-    <>
+    <div className="flex items-center">
       <UserButton>
         <UserButton.MenuItems>
           <UserButton.Link
@@ -17,9 +18,10 @@ function HeaderProfileBtn() {
       </UserButton>
 
       <SignedOut>
-        <SignInButton></SignInButton>
+        {/* <SignInButton></SignInButton> */}
+        <LoginButton></LoginButton>
       </SignedOut>
-    </>
+    </div>
   );
 }
 export default HeaderProfileBtn;
