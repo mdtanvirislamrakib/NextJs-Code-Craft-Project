@@ -1,5 +1,6 @@
 import { Monaco } from "@monaco-editor/react";
 import { Theme } from "../../../types";
+type MonacoBaseTheme = 'vs' | 'vs-dark' | 'hc-black';
 
 type LanguageConfig = Record<
   string,
@@ -344,7 +345,15 @@ export const THEMES: Theme[] = [
   { id: "solarized-dark", label: "Solarized Dark", color: "#002b36" },
 ];
 
-export const THEME_DEFINITONS = {
+const THEME_DEFINITION_OBJECT: Record<
+  string,
+  {
+    base: MonacoBaseTheme;
+    inherit: boolean;
+    rules: { token: string; foreground: string }[];
+    colors: Record<string, string>;
+  }
+> =  {
   "github-dark": {
     base: "vs-dark",
     inherit: true,
@@ -418,12 +427,13 @@ export const THEME_DEFINITONS = {
     },
   },
 };
+export const THEME_DEFINITONS = THEME_DEFINITION_OBJECT;
 
 // Helper function to define themes in Monaco
 export const defineMonacoThemes = (monaco: Monaco) => {
   Object.entries(THEME_DEFINITONS).forEach(([themeName, themeData]) => {
     monaco.editor.defineTheme(themeName, {
-      base: themeData.base,
+      base: themeData.base, // ✅ error ar dibe na
       inherit: themeData.inherit,
       rules: themeData.rules.map((rule) => ({
         ...rule,
