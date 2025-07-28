@@ -1,31 +1,28 @@
-"use client"
+"use client";
+import { useCodeEditorStore } from "@/store/useCodeEditorStore";
+import { useEffect, useState } from "react";
+import { defineMonacoThemes, LANGUAGE_CONFIG } from "../_constants";
+import { Editor } from "@monaco-editor/react";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { RotateCcwIcon, ShareIcon, TypeIcon } from "lucide-react";
+import { useClerk } from "@clerk/nextjs";
+import { EditorPanelSkeleton } from "./EditorPanelSkeleton";
+import useMounted from "@/hooks/useMounted";
+import ShareSnippetDialog from "./ShareSnippetDialog";
 
-
-import { useCodeEditorStore } from '@/store/useCodeEditorStore';
-import React, { useEffect, useState } from 'react';
-import { defineMonacoThemes, LANGUAGE_CONFIG } from '../_constants';
-import Image from 'next/image';
-import { RotateCcwIcon, ShareIcon, TypeIcon } from 'lucide-react';
-import { motion } from "framer-motion"
-import { Editor } from '@monaco-editor/react';
-import useMounted from '@/hooks/useMounted';
-import { useClerk } from '@clerk/nextjs';
-import { EditorPanelSkeleton } from './EditorPanelSkeleton';
-import ShareSnippetDialog from './ShareSnippetDialog';
-
-const EditorPanel = () => {
-
+function EditorPanel() {
+  const clerk = useClerk();
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const { language, theme, fontSize, editor, setFontSize, setEditor } = useCodeEditorStore();
+
   const mounted = useMounted();
-  const clerk = useClerk();
 
   useEffect(() => {
     const savedCode = localStorage.getItem(`editor-code-${language}`);
     const newCode = savedCode || LANGUAGE_CONFIG[language].defaultCode;
     if (editor) editor.setValue(newCode);
-
-  }, [language, editor])
+  }, [language, editor]);
 
   useEffect(() => {
     const savedFontSize = localStorage.getItem("editor-font-size");
@@ -36,20 +33,19 @@ const EditorPanel = () => {
     const defaultCode = LANGUAGE_CONFIG[language].defaultCode;
     if (editor) editor.setValue(defaultCode);
     localStorage.removeItem(`editor-code-${language}`);
-  }
+  };
 
   const handleEditorChange = (value: string | undefined) => {
     if (value) localStorage.setItem(`editor-code-${language}`, value);
-  }
+  };
 
   const handleFontSizeChange = (newSize: number) => {
     const size = Math.min(Math.max(newSize, 12), 24);
     setFontSize(size);
     localStorage.setItem("editor-font-size", size.toString());
-  }
+  };
 
   if (!mounted) return null;
-
 
   return (
     <div className="relative">
@@ -108,8 +104,8 @@ const EditorPanel = () => {
           </div>
         </div>
 
+        {/* Editor  */}
         <div className="relative group rounded-xl overflow-hidden ring-1 ring-white/[0.05]">
-
           {clerk.loaded && (
             <Editor
               height="600px"
@@ -143,15 +139,10 @@ const EditorPanel = () => {
           )}
 
           {!clerk.loaded && <EditorPanelSkeleton />}
-
-
-
         </div>
-
       </div>
       {isShareDialogOpen && <ShareSnippetDialog onClose={() => setIsShareDialogOpen(false)} />}
     </div>
   );
-};
-
+}
 export default EditorPanel;
