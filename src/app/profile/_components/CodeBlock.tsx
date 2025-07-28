@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
