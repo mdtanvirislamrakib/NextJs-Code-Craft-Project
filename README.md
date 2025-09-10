@@ -34,3 +34,11 @@
    ```bash
    git clone https://github.com/your-username/codecraft.git
    cd codecraft
+   ```
+2. Install dependencies
+   ```npm install
+   ```
+3. Add environment variables (Clerk, Convex, etc.)
+4. Run the development server
+   ``` npm run dev```
+
